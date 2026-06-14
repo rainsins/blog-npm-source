@@ -22,7 +22,7 @@
     let dashLoaded = false;
     let hlsLoaded = false;
     let playerInstances = [];
-    
+
     // 添加初始化状态追踪
     const initializingPlayers = new Set(); // 正在初始化的播放器ID
     const initializationPromises = new Map(); // 存储初始化Promise
@@ -62,7 +62,7 @@
         const script = document.createElement('script');
         script.src = src;
         script.setAttribute('crossorigin', 'anonymous');
-        
+
         let timeoutId;
         const cleanup = () => {
           if (timeoutId) clearTimeout(timeoutId);
@@ -73,7 +73,7 @@
         script.onload = () => {
           cleanup();
           console.log(`[artalk-plugin-video] 成功加载: ${src}`);
-          
+
           // 给一点时间让库初始化
           setTimeout(() => {
             if (globalVar && !checkLibraryAvailable(globalVar.split('.')[0], globalVar.split('.')[0])) {
@@ -114,22 +114,22 @@
         document.head.appendChild(link);
       });
     };
-    
+
     // 2025年国内可用 CDN 备用列表
     const cdnFallbacks = {
       plyr: {
         css: [
-          'https://cdn.rainsin.cn/plyr/dist/plyr.css',
+          'https://cdn.jsdelivr.net/npm/plyr@3.8.4/dist/plyr.min.css',
         ],
         js: [
-          'https://cdn.rainsin.cn/plyr/dist/plyr.min.js',
+          'https://cdn.jsdelivr.net/npm/plyr@3.8.4/dist/plyr.polyfilled.min.js',
         ]
       },
       dash: [
-        'https://cdn.rainsin.cn/dashjs/dist/modern/umd/dash.all.min.js',
+        'https://cdn.jsdelivr.net/npm/dashjs@5.2.0/dist/legacy/umd/dash.all.min.js',
       ],
       hls: [
-        'https://cdn.rainsin.cn/hls.js/dist/hls.min.js',
+        'https://gcore.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js',
       ]
     };
 
@@ -162,7 +162,7 @@
           // 加载 Plyr
           if (!plyrLoaded) {
             console.log('[artalk-plugin-video] 开始加载 Plyr...');
-            
+
             // 先加载 CSS
             let cssLoaded = false;
             for (const cssUrl of cdnFallbacks.plyr.css) {
@@ -174,7 +174,7 @@
                 console.warn(`[artalk-plugin-video] Plyr CSS 加载失败: ${cssUrl}`);
               }
             }
-            
+
             if (!cssLoaded) {
               console.warn('[artalk-plugin-video] Plyr CSS 加载失败，将使用默认样式');
             }
@@ -233,7 +233,7 @@
       }
 
       const playerId = 'video-player-' + Math.random().toString(36).substr(2, 9);
-      
+
       let videoElement = '';
       if (type === 'video') {
         videoElement = `<video class="plyr-video" ${poster ? `poster="${poster}"` : ''} playsinline controls crossorigin="anonymous"></video>`;
@@ -259,13 +259,13 @@
 
       const style = document.createElement('style');
       style.id = styleId;
-      
+
       const customPlyrStyles = `
         :root {
           --plyr-icon-url: https://npm.elemecdn.com/plyr@3.7.8/dist/plyr.svg;
         }
       `;
-      
+
       style.textContent = customPlyrStyles + `
         /* 白天模式样式 */
         html[data-mode="light"] .artalk-video-player,
@@ -279,12 +279,12 @@
           transition: all 0.2s ease;
           max-width: 100%;
         }
-        
+
         html[data-mode="light"] .artalk-video-player:hover,
         .artalk-video-player:hover {
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        
+
         html[data-mode="light"] .video-title,
         .video-title {
           font-size: 14px;
@@ -295,7 +295,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        
+
         html[data-mode="light"] .artalk-video-error,
         .artalk-video-error {
           color: #dc3545;
@@ -318,11 +318,11 @@
           transition: all 0.2s ease;
           max-width: 100%;
         }
-        
+
         html[data-mode="dark"] .artalk-video-player:hover {
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        
+
         html[data-mode="dark"] .video-title {
           font-size: 14px;
           font-weight: 500;
@@ -332,7 +332,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        
+
         html[data-mode="dark"] .artalk-video-error {
           color: #fed7d7;
           background: #742a2a;
@@ -350,48 +350,48 @@
           max-width: 600px;
           margin: 0 auto;
         }
-        
+
         .video-container video {
           width: 100%;
           height: auto;
           border-radius: 6px;
         }
-        
+
         /* Plyr 播放器自定义样式 */
         .artalk-video-player .plyr {
           border-radius: 6px;
           overflow: hidden;
         }
-        
+
         .artalk-video-player .plyr--video {
           background: #000;
         }
-        
+
         /* 响应式设计 */
         @media (max-width: 768px) {
           .video-container {
             max-width: 100%;
           }
-          
+
           .artalk-video-player {
             padding: 12px;
           }
         }
-        
+
         @media (max-width: 480px) {
           .video-container {
             max-width: 100%;
           }
-          
+
           .artalk-video-player {
             padding: 8px;
           }
-          
+
           .video-title {
             font-size: 13px;
           }
         }
-        
+
         /* 加载状态 */
         .video-loading {
           display: flex;
@@ -403,7 +403,7 @@
           color: #666;
           font-size: 14px;
         }
-        
+
         html[data-mode="dark"] .video-loading {
           background: #1a202c;
           color: #a0aec0;
@@ -440,7 +440,7 @@
     // 修复后的初始化函数 - 防止重复初始化
     const initVideoPlayer = async (playerElement) => {
       const playerId = playerElement.id;
-      
+
       // 检查是否已经初始化或正在初始化
       if (playerElement.dataset.inited === 'true') {
         console.log(`[artalk-plugin-video] 播放器 ${playerId} 已经初始化，跳过`);
@@ -456,7 +456,7 @@
       const src = playerElement.dataset.src;
       const type = playerElement.dataset.type;
       const title = playerElement.dataset.title;
-      
+
       const videoElement = playerElement.querySelector('video');
       if (!videoElement) {
         console.error(`[artalk-plugin-video] 播放器 ${playerId} 找不到 video 元素`);
@@ -510,10 +510,10 @@
             if (typeof window.dashjs === 'undefined') {
               throw new Error('dash.js 库未正确加载');
             }
-            
+
             // DASH 流配置
             const dashPlayer = window.dashjs.MediaPlayer().create();
-            
+
             dashPlayer.updateSettings({
               'debug': {
                 'logLevel': window.dashjs.Debug.LOG_LEVEL_NONE
@@ -533,15 +533,15 @@
             });
 
             dashPlayer.initialize(videoElement, src, false);
-            
+
             player = new window.Plyr(videoElement, {
               controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen'],
               settings: ['quality', 'speed'],
               quality: { default: 'auto', options: ['auto'] }
             });
-              
-            player.dash = dashPlayer; 
-            
+
+            player.dash = dashPlayer;
+
           } else if (type === 'hls') {
             // HLS 流
             if (typeof window.Hls !== 'undefined' && window.Hls.isSupported()) {
@@ -551,19 +551,19 @@
               });
               hls.loadSource(src);
               hls.attachMedia(videoElement);
-              
+
               player = new window.Plyr(videoElement, {
                 controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen'],
                 settings: ['quality', 'speed'],
                 quality: { default: 'auto', options: ['auto'] }
               });
-              
+
               player.hls = hls;
-              
+
               hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
                 console.log('[artalk-plugin-video] HLS manifest loaded');
               });
-              
+
               hls.on(window.Hls.Events.ERROR, (event, data) => {
                 console.error('[artalk-plugin-video] HLS error:', data);
                 if (data.fatal) {
@@ -621,21 +621,21 @@
           // 标记初始化完成
           playerElement.dataset.inited = 'true';
           delete playerElement.dataset.initializing;
-          
+
           console.log(`[artalk-plugin-video] ${type} 播放器初始化完成:`, title);
 
           return player;
 
         } catch (error) {
           console.error(`[artalk-plugin-video] 播放器 ${playerId} 初始化失败:`, error);
-          
+
           // 清理加载状态
           const loadingDiv = playerElement.querySelector('.video-loading');
           if (loadingDiv) loadingDiv.remove();
-          
+
           // 移除初始化标记
           delete playerElement.dataset.initializing;
-          
+
           // 创建错误信息
           const existingError = playerElement.querySelector('.artalk-video-error');
           if (!existingError) {
@@ -645,10 +645,10 @@
               视频加载失败: ${error.message}
               <button class="video-retry-btn" onclick="this.parentElement.nextElementSibling.dataset.inited=''; this.parentElement.nextElementSibling.querySelector('video').style.display='none'; this.parentElement.remove(); window.ArtalkPlugins.ArtalkVideoPlugin.retryInit(this.parentElement.nextElementSibling);">重试</button>
             `;
-            
+
             playerElement.parentNode.insertBefore(errorMsg, playerElement);
           }
-          
+
           videoElement.style.display = 'none';
           throw error;
         } finally {
@@ -682,7 +682,7 @@
       // 查找所有评论内容容器
       $('.atk-content, .atk-editor-plug-preview').each(function() {
         const $content = $(this);
-        
+
         // 遍历所有 p 元素
         $content.find('p').each(function() {
           const $p = $(this);
@@ -740,7 +740,7 @@
       $('.artalk-video-player').each(function() {
         const $player = $(this);
         const playerId = this.id;
-        
+
         if (!this.dataset.inited && !this.dataset.initializing && !initializingPlayers.has(playerId)) {
           // 添加延迟，避免频繁初始化
           setTimeout(() => {
@@ -753,7 +753,7 @@
     // 初始化插件
     const init = () => {
       addStyles();
-      
+
       // 监听评论列表加载事件
       artalk.on('list-loaded', () => {
         // 延迟处理，确保 DOM 已更新
@@ -764,7 +764,7 @@
       artalk.on('comment-rendered', () => {
         setTimeout(processVideoSyntax, 100);
       });
-      
+
       console.log('[artalk-plugin-video] 插件已加载 - 支持 Plyr + DASH + HLS (修复多个初始化框版本)');
     };
 
@@ -780,7 +780,7 @@
       // 清理所有初始化状态
       initializingPlayers.clear();
       initializationPromises.clear();
-      
+
       playerInstances.forEach(player => {
         if (player) {
           try {
@@ -830,9 +830,9 @@
           }
         }
       });
-      
+
       playerInstances = [];
-      
+
       // 清理可能残留的加载状态
       document.querySelectorAll('.video-loading').forEach(loading => {
         try {
@@ -841,7 +841,7 @@
           // 静默处理
         }
       });
-      
+
       // 重置所有播放器的初始化状态
       document.querySelectorAll('.artalk-video-player').forEach(player => {
         delete player.dataset.inited;
@@ -858,7 +858,7 @@
       window.ArtalkPlugins = {};
     }
     window.ArtalkPlugins.ArtalkVideoPlugin = ArtalkVideoPlugin;
-    
+
     if (window.Artalk) {
       window.Artalk.use(ArtalkVideoPlugin);
     }
